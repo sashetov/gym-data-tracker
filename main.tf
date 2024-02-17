@@ -1,7 +1,13 @@
 provider "aws" {
-  profile = "interview_free_acct"
+  profile = "default"
   region = "us-west-2" # Set your desired AWS region
 }
+
+data "aws_route53_zone" "selected" {
+  name         = "vassilevski.com." # Ensure the domain name ends with a dot
+  private_zone = false          # Set to true if you're querying a private hosted zone
+}
+
 resource "aws_security_group" "flask_security_group" {
   name_prefix = "flask-sg-"
   vpc_id = "vpc-08a427d3952213b57"
@@ -41,25 +47,17 @@ resource "aws_instance" "flask_server" {
   security_groups    = [aws_security_group.flask_security_group.id]
   subnet_id          = "subnet-00ab85e47e214105f"
   associate_public_ip_address = true
-  user_data = <<-EOF
-              #!/bin/bash
-              sudo yum update -y
-              sudo yum -y install git httpd mod_proxy mod_proxy_http
-              systemctl start httpd
-              systemctl enable httpd
-              echo "<VirtualHost *:80>
-                      ServerName localhost
-                      ProxyPass / http://127.0.0.1:5000/
-                      ProxyPassReverse / http://127.0.0.1:5000/
-                  </VirtualHost>" > /etc/httpd/conf.d/reverse-proxy.conf
-              systemctl restart httpd
-              git clone https://github.com/sashetov/test.git ~/flask-hello-world
-              cd ~/flask-hello-world
-              python3 -m venv env
-              source env/bin/activate
-              pip install -r requirements.txt
-              flask run
-              EOF
+  user_data = templatefile("${path.module}/user_data_script.tpl", {
+    htpasswd_user     = var.htpasswd_user,
+    htpasswd_password = var.htpasswd_password
+  })
+}
+resource "aws_route53_record" "example" {
+  zone_id = data.aws_route53_zone.selected.zone_id
+  name    = "backenddemo.vassilevski.com"
+  type    = "A"
+  ttl     = "300"
+  records = [aws_instance.flask_server.public_ip]
 }
 output "public_ip" {
   value = aws_instance.flask_server.public_ip
