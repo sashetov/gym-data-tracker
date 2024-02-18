@@ -10,7 +10,7 @@ data "aws_route53_zone" "selected" {
 
 resource "aws_security_group" "flask_security_group" {
   name_prefix = "flask-sg-"
-  vpc_id = "vpc-08a427d3952213b57"
+  vpc_id = "vpc-1fa41b7b"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -45,7 +45,7 @@ resource "aws_instance" "flask_server" {
   instance_type = "t2.micro"
   key_name      = aws_key_pair.my_key_pair.key_name
   security_groups    = [aws_security_group.flask_security_group.id]
-  subnet_id          = "subnet-00ab85e47e214105f"
+  subnet_id          = "subnet-f58f3491"
   associate_public_ip_address = true
   user_data = templatefile("${path.module}/user_data_script.tpl", {
     htpasswd_user     = var.htpasswd_user,
