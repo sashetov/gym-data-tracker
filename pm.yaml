@@ -4,7 +4,7 @@ metadata:
   name: webapp
   labels:
     name: containers-my-app
-    release: prom
+    release: test
   namespace: default
 spec:
   namespaceSelector:
@@ -13,5 +13,6 @@ spec:
   selector:
     matchLabels:
       name: containers-my-app
+      release: test
   podMetricsEndpoints:
   - port: webapp
