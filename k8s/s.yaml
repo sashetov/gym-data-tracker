@@ -6,7 +6,7 @@ metadata:
     name: containers-my-app
   namespace: default
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
   - name: http
     port: 80
