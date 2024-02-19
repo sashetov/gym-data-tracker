@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: webapp
+  labels:
+    name: containers-my-app
+    release: prom
+  namespace: default
+spec:
+  namespaceSelector:
+    matchNames:
+    - default
+  selector:
+    matchLabels:
+      name: containers-my-app
+  endpoints:
+  - port: http

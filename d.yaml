@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  labels:
+    name: containers-my-app
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      name: containers-my-app
+  template:
+    metadata:
+      labels:
+        name: containers-my-app
+    spec:
+      containers:
+      - name: app
+        image: ghcr.io/camptocamp/course_docker_backend:python
+        ports:
+        - containerPort: 8080
+          name: webapp
