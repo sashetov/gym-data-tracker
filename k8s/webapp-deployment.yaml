@@ -20,3 +20,15 @@ spec:
         ports:
         - containerPort: 8080
           name: webapp
+        env:
+        - name: MYSQL_USER
+          value: "root"
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-root-pass
+              key: password
+        - name: MYSQL_SERVICE_HOST
+          value: "mysql-service.default.svc.cluster.local"
+        - name: MYSQL_DATABASE
+          value: "gymdata"
