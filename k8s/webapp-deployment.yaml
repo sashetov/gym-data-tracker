@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: 927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:gym-data-tracker-app-v2
+        image: 927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:gym-data-tracker-app-v3
         ports:
         - containerPort: 8080
           name: webapp

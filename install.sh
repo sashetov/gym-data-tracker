@@ -1,7 +1,7 @@
 #!/bin/bash
 . .env
 set -xv
-V=2
+V=3
 APP_NS=gym-data-tracker
 CLUSTER_NAME=eks-cluster
 eksctl create cluster --name $CLUSTER_NAME --region us-west-2 --nodegroup-name nodesgroup --node-type t3.medium --nodes 3

@@ -13,17 +13,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class WorkoutTypes(db.Model):
+    __tablename__ = 'workout_types'
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
 class Workouts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'workouts'
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8'}
     workout_type_id = db.Column(db.Integer, db.ForeignKey('workout_types.id'), nullable=False)
     duration = db.Column(db.Float, nullable=False)  # Duration in minutes
     intensity = db.Column(db.String(50))
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Biometrics(db.Model):
+    __tablename__ = 'biometrics'
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8'}
     id = db.Column(db.Integer, primary_key=True)
     heart_rate = db.Column(db.Integer)
     calories_burned = db.Column(db.Integer)
