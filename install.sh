@@ -51,7 +51,7 @@ timeout 60 bash -c 'while true; do if kubectl get pods --no-headers | grep "^mys
     exit 1;
 } # wait for mysql pod to become available
 MY_POD=$(kubectl get pods --no-headers | grep "^mysql" | awk '{print $1}' | head -n 1)
-kubectl exec -it $MY_POD -c mysql -- /usr/bin/mysql -u root -p"${MYSQL_ROOT_PASS}" -e "CREATE DATABASE IF NOT EXISTS gymdata;" # make the database
+kubectl exec -it $MY_POD -c mysql-server -- /usr/bin/mysql -u root -p"${MYSQL_ROOT_PASS}" -e "CREATE DATABASE IF NOT EXISTS gymdata;" # make the database
 
 # make webapp + monitors
 kubectl apply -f k8s/webapp-deployment.yaml \
