@@ -3,20 +3,20 @@ kind: Deployment
 metadata:
   name: webapp
   labels:
-    name: containers-my-app
+    name: containers-gym-data-tracker-app
   namespace: default
 spec:
   selector:
     matchLabels:
-      name: containers-my-app
+      name: containers-gym-data-tracker-app
   template:
     metadata:
       labels:
-        name: containers-my-app
+        name: containers-gym-data-tracker-app
     spec:
       containers:
       - name: app
-        image: 927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:flask-load-app-v1
+        image: 927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:gym-data-tracker-app-v1
         ports:
         - containerPort: 8080
           name: webapp

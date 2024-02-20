@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: webapp
   labels:
-    name: containers-my-app
+    name: containers-gym-data-tracker-app
   namespace: default
 spec:
   type: LoadBalancer
@@ -11,6 +11,6 @@ spec:
   - name: http
     port: 80
     protocol: TCP
-    targetPort: webapp
+    targetPort: 5000
   selector:
-    name: containers-my-app
+    name: containers-gym-data-tracker-app

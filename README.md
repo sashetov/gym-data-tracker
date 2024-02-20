@@ -1,4 +1,18 @@
-Grafana dashboard for app container:
-    http://ad7cafbf60e36469cb437df78d77dae7-1891262572.us-west-2.elb.amazonaws.com/d/d1e229ef-d637-47fb-be4b-13e52eea69b8/app-container-metrics?from=1708297127081&to=1708319884224&orgId=1&theme=dark
-App Itself:
-    http://a9ab980022dea4fb1ab968bcce5b582b-124879317.us-west-2.elb.amazonaws.com/
+# Gym Data Tracker Flask App Deployment Guide
+
+This guide covers the deployment steps for the Gym Data Tracker.
+Gym Data tracker is a CRUD app for entering and displaying workout data for my gym sessions.
+
+## Prerequisites
+- AWS CLI configured with access rights
+- Docker installed and configured
+- `kubectl` and `eksctl` installed
+- Helm installed
+- Access to an AWS ECR repository
+
+## Installation Steps
+
+### Running the Script
+- Make the script executable: `chmod +x install.sh`
+- Run the script: `./install.sh`
+- This will install the cluster, the app and its database as well as prometheus/grafana and monitoring dashboards for it

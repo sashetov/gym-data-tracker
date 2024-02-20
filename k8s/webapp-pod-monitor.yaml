@@ -3,8 +3,8 @@ kind: PodMonitor
 metadata:
   name: webapp
   labels:
-    name: containers-my-app
-    release: test
+    name: containers-gym-data-tracker-app
+    release: gym-data-tracker
   namespace: default
 spec:
   namespaceSelector:
@@ -12,7 +12,7 @@ spec:
     - default
   selector:
     matchLabels:
-      name: containers-my-app
-      release: test
+      name: containers-gym-data-tracker-app
+      release: gym-data-tracker
   podMetricsEndpoints:
   - port: webapp

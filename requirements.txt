@@ -1,9 +1,3 @@
 flask
-pandas
-nltk
-numpy
-bs4
-requests
-matplotlib
-bokeh
-prometheus_client
+selenium
+webdriver_manager

@@ -1,0 +1,62 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "App Containers Monitoring",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "App Pod UP/DOWN",
+        "gridPos": {"h": 9, "w": 12, "x": 0, "y": 0},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "kube_pod_status_phase{pod =~ \"^webapp.*\", phase=\"Running\"} == 1",
+            "format": "time_series",
+            "intervalFactor": 2
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": null},
+          {"format": "short", "label": null}
+        ]
+      },
+      {
+        "type": "graph",
+        "title": "Container Memory Usage",
+        "gridPos": {"h": 9, "w": 12, "x": 0, "y": 0},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "container_memory_usage_bytes{container=\"app\"}",
+            "format": "time_series",
+            "intervalFactor": 2
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": null},
+          {"format": "short", "label": null}
+        ]
+      },
+      {
+        "type": "graph",
+        "title": "Container CPU Usage",
+        "gridPos": {"h": 9, "w": 12, "x": 0, "y": 0},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{container=\"app\"}[5m])",
+            "format": "time_series",
+            "intervalFactor": 2
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": null},
+          {"format": "short", "label": null}
+        ]
+      }
+    ],
+    "schemaVersion": 16,
+    "version": 1
+  },
+  "overwrite": false
+}
