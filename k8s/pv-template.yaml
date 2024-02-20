@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: gp2  # Or use a specific StorageClass name if you have one for EBS
+  csi:
+    driver: ebs.csi.aws.com
+    volumeHandle: YOUR_VOLUME_ID_PLACEHOLDER  # This will be replaced by the script
+    fsType: ext4

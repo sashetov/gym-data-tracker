@@ -2,20 +2,32 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql-server
+  namespace: default
+  labels:
+    app: mysql-server
+    release: gym-data-tracker
 spec:
   selector:
     matchLabels:
-      app: mysql
+      app: mysql-server
+      release: gym-data-tracker
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: mysql
+        app: mysql-server
+        release: gym-data-tracker
     spec:
       containers:
       - image: mysql:5.7
-        name: mysql
+        name: mysql-server
+        args:
+          - "--ignore-db-dir=lost+found"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1500m"
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -24,4 +36,24 @@ spec:
               key: password
         ports:
         - containerPort: 3306
-          name: mysql
+          name: mysql-server
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-data
+      - image: prom/mysqld-exporter
+        name: mysqld-exporter
+        args:
+          - "--config.my-cnf=/etc/mysqld-exporter/.my.cnf"
+        volumeMounts:
+          - name: mysqld-exporter-config
+            mountPath: /etc/mysqld-exporter/
+        ports:
+        - containerPort: 9104
+          name: metrics
+      volumes:
+      - name: mysqld-exporter-config
+        configMap:
+          name: mysqld-exporter-config
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: mysql-data

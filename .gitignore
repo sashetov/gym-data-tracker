@@ -79,3 +79,5 @@ make-network-prereqs.sh
 mykeypair
 mykeypair.pub
 notes
+k8s/mysql-pv.yaml
+.my.cnf
