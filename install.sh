@@ -1,7 +1,6 @@
 #!/bin/bash
 . .env
 set -xv
-V=3
 APP_NS=gym-data-tracker
 CLUSTER_NAME=eks-cluster
 eksctl create cluster --name $CLUSTER_NAME --region us-west-2 --nodegroup-name nodesgroup --node-type t3.medium --nodes 3
@@ -23,9 +22,9 @@ kubectl delete pods -l 'app.kubernetes.io/name=grafana' # delete it to restart a
 kubectl patch svc gym-data-tracker-grafana -p '{"spec": {"type": "LoadBalancer"}}'
 kubectl patch svc gym-data-tracker-kube-prom-prometheus -p '{"spec": {"type": "LoadBalancer"}}'
 aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 927315517716.dkr.ecr.us-west-2.amazonaws.com
-docker build -t sashetov/gym-data-tracker-app:v$V .
-docker tag sashetov/gym-data-tracker-app:v1 927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:gym-data-tracker-app-v$V
-docker push  927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:gym-data-tracker-app-v$V
+docker build -t sashetov/gym-data-tracker-app:v$VERSION .
+docker tag sashetov/gym-data-tracker-app:v1 927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:gym-data-tracker-app-v$VERSION
+docker push  927315517716.dkr.ecr.us-west-2.amazonaws.com/seshsrepo:gym-data-tracker-app-v$VERSION
 kubectl create secret generic mysql-root-pass --from-literal=password=$MYSQL_ROOT_PASS
 
 #MAKE DB + MONITOR
@@ -55,8 +54,8 @@ MY_POD=$(kubectl get pods --no-headers | grep "^mysql" | awk '{print $1}' | head
 kubectl exec -it $MY_POD -c mysql-server -- /usr/bin/mysql -u root -p"${MYSQL_ROOT_PASS}" -e "CREATE DATABASE IF NOT EXISTS gymdata;" # make the database
 
 # make webapp + monitors
-kubectl apply -f k8s/webapp-deployment.yaml \
-              -f k8s/webapp-service.yaml \
+envsubst < k8s/webapp-deployment.yaml | kubectl apply -f - # make sure VERSION gets substituted
+kubectl apply -f k8s/webapp-service.yaml \
               -f k8s/webapp-service-monitor.yaml \
               -f k8s/webapp-pod-monitor.yaml
 
