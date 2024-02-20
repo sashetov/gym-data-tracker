@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 app = Flask(__name__)
@@ -82,6 +82,15 @@ def get_biometric_data():
     dates = [biometric.date.strftime('%Y-%m-%d') for biometric in biometrics]
     heart_rates = [biometric.heart_rate for biometric in biometrics]
     return jsonify(dates=dates, heart_rates=heart_rates)
+
+@app.route('/favicon-32x32.png')
+@app.route('/favicon-16x16.png')
+@app.route('/apple-touch-icon.png')
+@app.route('/safari-pinned-tab.svg')
+@app.route('/site.webmanifest')
+def favicon():
+    filename = request.path[1:]  # Extract filename from route
+    return send_from_directory('static/favicons', filename)
 
 @app.route('/')
 def charts():
