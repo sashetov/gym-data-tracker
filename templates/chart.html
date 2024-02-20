@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Workout and Biometric Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Workout Data</h2>
+    <div>
+        <canvas id="workoutChart"></canvas>
+    </div>
+    <h2>Biometric Data</h2>
+    <div>
+        <canvas id="biometricChart"></canvas>
+    </div>
+
+    <script>
+        // Fetch and render workout chart
+        fetch('/data/workouts')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('workoutChart').getContext('2d');
+                const workoutChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [{
+                            label: 'Workout Duration',
+                            data: data.durations,
+                            fill: false,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                });
+            });
+
+        // Fetch and render biometric chart
+        fetch('/data/biometrics')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('biometricChart').getContext('2d');
+                const biometricChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [{
+                            label: 'Heart Rate',
+                            data: data.heart_rates,
+                            fill: false,
+                            borderColor: 'rgb(255, 99, 132)',
+                            tension: 0.1
+                        }]
+                    },
+                });
+            });
+    </script>
+</body>
+</html>

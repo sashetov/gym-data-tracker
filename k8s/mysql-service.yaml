@@ -18,5 +18,5 @@ spec:
     - name: metrics
       protocol: TCP
       port: 9104
-      targetPort: metrics
+      targetPort: 9104
   type: ClusterIP
