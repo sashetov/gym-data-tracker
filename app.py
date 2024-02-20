@@ -6,9 +6,10 @@ app = Flask(__name__)
 user = os.getenv('MYSQL_USER')
 password = os.getenv('MYSQL_PASSWORD')
 hostname = os.getenv('MYSQL_SERVICE_HOST', 'mysql-service')
+port = os.getenv('MYSQL_SERVICE_PORT', 'mysql-service')
 database_name = os.getenv('MYSQL_DATABASE')
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{user}:{password}@{hostname}/{database_name}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{user}:{password}@{hostname}:{port}/{database_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -86,9 +87,7 @@ def get_biometric_data():
 def charts():
     return render_template('chart.html')
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
 
 if __name__ == '__main__':
+    db.create_all()
     app.run(debug=True, host='0.0.0.0')
