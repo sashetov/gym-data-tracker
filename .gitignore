@@ -81,3 +81,4 @@ mykeypair.pub
 notes
 k8s/mysql-pv.yaml
 .my.cnf
+*.vim

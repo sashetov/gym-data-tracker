@@ -63,7 +63,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.message) {
-                    alert(data.message); // Show success message
                     chartUpdateCallback(); // Update the chart if necessary
                 } else {
                     throw new Error('Failed to submit data');
@@ -75,12 +74,13 @@
             });
         }
         // Fetch and render workout chart
-        function updateWorkoutChart() {
+        function createWorkoutChart() {
             fetch('/data/workouts')
                 .then(response => response.json())
                 .then(data => {
-                    const ctx = document.getElementById('workoutChart').getContext('2d');
-                    const workoutChart = new Chart(ctx, {
+                    const canvas = document.getElementById('workoutChart');
+                    const ctx = canvas.getContext('2d');
+                    workoutChart = new Chart(ctx, {
                         type: 'line',
                         data: {
                             labels: data.dates,
@@ -92,16 +92,21 @@
                                 tension: 0.1
                             }]
                         },
+                        options: {
+                            responsive: true
+                        },
                     });
+                    canvas.chartInstance = workoutChart;
                 });
         }
         // Fetch and render biometric chart
-        function updateBiometricChart() {
+        function createBiometricChart() {
             // Fetch and render biometric chart
             fetch('/data/biometrics')
                 .then(response => response.json())
                 .then(data => {
-                    const ctx = document.getElementById('biometricChart').getContext('2d');
+                    const canvas = document.getElementById('biometricChart');
+                    const ctx = canvas.getContext('2d');
                     const biometricChart = new Chart(ctx, {
                         type: 'line',
                         data: {
@@ -114,16 +119,50 @@
                                 tension: 0.1
                             }]
                         },
+                        options: {
+                            responsive: true
+                        },
                     });
+                    canvas.chartInstance = biometricChart;
                 });
+        }
+        // Fetch and update workout chart data
+        function updateWorkoutChart() {
+            fetch('/data/workouts')
+                .then(response => response.json())
+                .then(data => {
+                    const canvas = document.getElementById('workoutChart');
+                    const chart = canvas.chartInstance;
+                    chart.data.labels = data.dates;
+                    chart.data.datasets.forEach((dataset) => {
+                        dataset.data = data.durations;
+                    });
+                    chart.update();
+                })
+                .catch(error => console.error('Error updating workout chart:', error));
+        }
+        // Fetch and update biometric chart data
+        function updateBiometricChart() {
+            fetch('/data/biometrics')
+                .then(response => response.json())
+                .then(data => {
+                    const canvas = document.getElementById('biometricChart');
+                    const chart = canvas.chartInstance;
+                    chart.data.labels = data.dates;
+                    chart.data.datasets.forEach((dataset) => {
+                        dataset.data = data.heart_rates;
+                    });
+                    chart.update();
+                })
+                .catch(error => console.error('Error updating biometric chart:', error));
         }
         // Attach submit event listeners to forms
         document.getElementById('workout-type-form').addEventListener('submit', (event) => submitFormData(event, 'workout-type-form', '/workout-types', updateWorkoutChart));
         document.getElementById('workout-log-form').addEventListener('submit', (event) => submitFormData(event, 'workout-log-form', '/workouts', updateWorkoutChart));
         document.getElementById('biometrics-log-form').addEventListener('submit', (event) => submitFormData(event, 'biometrics-log-form', '/biometrics', updateBiometricChart));
         // Render first time
-        updateWorkoutChart()
-        updateBiometricChart()
+        createWorkoutChart()
+        createBiometricChart()
     </script>
 </body>
 </html>
