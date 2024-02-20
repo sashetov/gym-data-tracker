@@ -15,46 +15,115 @@
         <canvas id="biometricChart"></canvas>
     </div>
 
-    <script>
-        // Fetch and render workout chart
-        fetch('/data/workouts')
-            .then(response => response.json())
-            .then(data => {
-                const ctx = document.getElementById('workoutChart').getContext('2d');
-                const workoutChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.dates,
-                        datasets: [{
-                            label: 'Workout Duration',
-                            data: data.durations,
-                            fill: false,
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.1
-                        }]
-                    },
-                });
-            });
+    <!-- Workout Type Form -->
+    <h3>Add Workout Type</h3>
+    <form id="workout-type-form" action="/workout-types" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit">Submit</button>
+    </form>
 
-        // Fetch and render biometric chart
-        fetch('/data/biometrics')
+    <!-- Workout Log Form -->
+    <h3>Log Workout</h3>
+    <form id="workout-log-form" action="/workouts" method="post">
+        <label for="workout_type_id">Workout Type ID:</label>
+        <input type="number" id="workout_type_id" name="workout_type_id" required>
+        <label for="duration">Duration (in minutes):</label>
+        <input type="text" id="duration" name="duration" required>
+        <label for="intensity">Intensity:</label>
+        <input type="text" id="intensity" name="intensity">
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Biometrics Log Form -->
+    <h3>Log Biometrics</h3>
+    <form id="biometrics-log-form" action="/biometrics" method="post">
+        <label for="heart_rate">Heart Rate:</label>
+        <input type="number" id="heart_rate" name="heart_rate">
+        <label for="calories_burned">Calories Burned:</label>
+        <input type="number" id="calories_burned" name="calories_burned">
+        <label for="workout_id">Workout ID:</label>
+        <input type="number" id="workout_id" name="workout_id" required>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        // Function to submit form data using AJAX and handle response
+        function submitFormData(event, formId, url, chartUpdateCallback) {
+            event.preventDefault(); // Prevent default form submission behavior
+            const formData = new FormData(document.getElementById(formId));
+            const data = {};
+            formData.forEach((value, key) => { data[key] = value; });
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData)),
+            })
             .then(response => response.json())
             .then(data => {
-                const ctx = document.getElementById('biometricChart').getContext('2d');
-                const biometricChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.dates,
-                        datasets: [{
-                            label: 'Heart Rate',
-                            data: data.heart_rates,
-                            fill: false,
-                            borderColor: 'rgb(255, 99, 132)',
-                            tension: 0.1
-                        }]
-                    },
-                });
+                if (data.message) {
+                    alert(data.message); // Show success message
+                    chartUpdateCallback(); // Update the chart if necessary
+                } else {
+                    throw new Error('Failed to submit data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting form data');
             });
+        }
+        // Fetch and render workout chart
+        function updateWorkoutChart() {
+            fetch('/data/workouts')
+                .then(response => response.json())
+                .then(data => {
+                    const ctx = document.getElementById('workoutChart').getContext('2d');
+                    const workoutChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.dates,
+                            datasets: [{
+                                label: 'Workout Duration',
+                                data: data.durations,
+                                fill: false,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            }]
+                        },
+                    });
+                });
+        }
+        // Fetch and render biometric chart
+        function updateBiometricChart() {
+            // Fetch and render biometric chart
+            fetch('/data/biometrics')
+                .then(response => response.json())
+                .then(data => {
+                    const ctx = document.getElementById('biometricChart').getContext('2d');
+                    const biometricChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.dates,
+                            datasets: [{
+                                label: 'Heart Rate',
+                                data: data.heart_rates,
+                                fill: false,
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1
+                            }]
+                        },
+                    });
+                });
+        }
+        // Attach submit event listeners to forms
+        document.getElementById('workout-type-form').addEventListener('submit', (event) => submitFormData(event, 'workout-type-form', '/workout-types', updateWorkoutChart));
+        document.getElementById('workout-log-form').addEventListener('submit', (event) => submitFormData(event, 'workout-log-form', '/workouts', updateWorkoutChart));
+        document.getElementById('biometrics-log-form').addEventListener('submit', (event) => submitFormData(event, 'biometrics-log-form', '/biometrics', updateBiometricChart));
+        // Render first time
+        updateWorkoutChart()
+        updateBiometricChart()
     </script>
 </body>
 </html>

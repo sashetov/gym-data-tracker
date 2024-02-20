@@ -85,9 +85,8 @@ def get_biometric_data():
 
 @app.route('/')
 def charts():
+    db.create_all()
     return render_template('chart.html')
 
-
 if __name__ == '__main__':
-    db.create_all()
     app.run(debug=True, host='0.0.0.0')
